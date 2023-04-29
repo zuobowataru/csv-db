@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+             http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd
+             http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+    <!-- (1) -->
+    <bean class="org.tool.csvtodb.config.JobBaseContextConfig" />
+
+    <!-- (2) -->
+    <context:component-scan base-package="org.tool.csvtodb.dbaccess.chunk"/>
+
+    <!-- Repositoryインタフェースをスキャン -->
+    <mybatis:scan base-package="org.tool.csvtodb.common.repository" factory-ref="jobSqlSessionFactory"/>
+
+    <!-- ItemReaderの設定を -->
+    <bean id="reader"
+          class="org.mybatis.spring.batch.MyBatisCursorItemReader"
+          p:queryId="org.tool.csvtodb.common.repository.MemberInfoRepository.cursor"
+          p:sqlSessionFactory-ref="jobSqlSessionFactory"/>
+
+    <!-- ItemWriterの設定 -->
+    <bean id="writer" class="org.mybatis.spring.batch.MyBatisBatchItemWriter"
+          p:statementId="org.tool.csvtodb.common.repository.MemberInfoRepository.updatePointAndStatus"
+          p:sqlSessionTemplate-ref="batchModeSqlSessionTemplate"/>
+  
+    <!-- ジョブの設定 -->
+    <batch:job id="jobPointAddChunk" job-repository="jobRepository">
+        <batch:step id="jobPointAddChunk.step01"> <!-- (2) -->
+            <batch:tasklet transaction-manager="jobTransactionManager">
+                <batch:chunk reader="reader"
+                             processor="pointAddItemProcessor"
+                             writer="writer" commit-interval="10"/> <!-- (3) -->
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+</beans>

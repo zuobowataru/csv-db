@@ -1,0 +1,20 @@
+参考
+META-INF/jobs/fileaccess/jobPointAddTasklet.xml jobPointAddTasklet inputFile=files/input/input-member-info-data.csv outputFile=files/output/output-member-info-data.csv
+
+
+META-INF/jobs/filetodb/csvtofileTasklet.xml jobcsvtodbTasklet inputFile=files/input/addmenber.csv
+
+[2023/04/29 21:35:59] [main] [o.s.c.s.ClassPathXmlApplicationContext] [WARN ] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'CsvToFile.step01': Cannot resolve reference to bean 'CsvToFileTasklet' while setting bean property 'tasklet'
+[2023/04/29 21:35:59] [main] [o.s.b.c.l.s.CommandLineJobRunner] [ERROR] Job Terminated in error: Error creating bean with name 'CsvToFile.step01': Cannot resolve reference to bean 'CsvToFileTasklet' while setting bean property 'tasklet'
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'CsvToFile.step01': Cannot resolve reference to bean 'CsvToFileTasklet' while setting bean property 'tasklet'
+
+
+
+    <batch:job id="jobPointAddTasklet2" job-repository="jobRepository">
+        <batch:step id="jobPointAddTasklet.step01"> <!-- (2) -->
+            <batch:tasklet transaction-manager="jobTransactionManager"
+                           ref="pointAddTasklet2"/> <!-- (3) -->
+                                pointAddTasklet2
+                            
+        </batch:step>
+    </batch:job>

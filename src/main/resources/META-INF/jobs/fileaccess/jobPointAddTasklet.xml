@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+             http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd">
+
+    <!-- bese -->
+    <bean class="org.tool.csvtodb.config.JobBaseContextConfig"/>
+
+    <!--本丸 -->
+    <context:component-scan base-package="org.tool.csvtodb.fileaccess"/>
+    <!-- ItemReaderの設定-->
+    <bean id="reader"
+          class="org.springframework.batch.item.file.FlatFileItemReader" scope="step"
+          p:resource="file:#{jobParameters['inputFile']}"
+          p:encoding="UTF-8"
+          p:strict="true">
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <property name="lineTokenizer"> <!-- 1レコードを各項目に分割-->
+                    <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer"
+                          p:names="id,type,status,point"
+                          p:delimiter=","
+                          p:quoteCharacter='"'/> <!-- 区切り文字・囲み文字を設定する -->
+                </property>
+                <property name="fieldSetMapper"> <!--文字列や数字など特別な変換処理 -->
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper"
+                          p:targetType="org.tool.csvtodb.common.dto.MemberInfoDto"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- ItemWriterの設定 -->
+    <bean id="writer"
+          class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step"
+          p:resource="file:#{jobParameters['outputFile']}"
+          p:encoding="UTF-8"
+          p:lineSeparator="&#x0A;"
+          p:appendAllowed="false"
+          p:shouldDeleteIfExists="true"
+          p:transactional="true">
+        <property name="lineAggregator"> <!-- (9) -->
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator"
+                  p:delimiter=","> <!-- (10) -->
+                <property name="fieldExtractor"> <!-- (11) -->
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor"
+                          p:names="id,type,status,point"/> <!-- (12) -->
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- (1) -->
+    <batch:job id="jobPointAddTasklet2" job-repository="jobRepository">
+        <batch:step id="jobPointAddTasklet.step01"> <!-- (2) -->
+            <batch:tasklet transaction-manager="jobTransactionManager"
+                           ref="pointAddTasklet2"/> <!-- (3) -->
+        </batch:step>
+    </batch:job>
+
+</beans>
