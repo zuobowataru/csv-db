@@ -60,7 +60,7 @@ public class PointAddTasklet implements Tasklet{
                         item.setPoint(MAX_POINT);
                     }
 
-                   // item.setStatus(INITIAL_STATUS);
+                    item.setStatus(INITIAL_STATUS);
                 }
 
                 items.add(item);

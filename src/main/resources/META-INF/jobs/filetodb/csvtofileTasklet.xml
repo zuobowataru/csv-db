@@ -4,16 +4,21 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:batch="http://www.springframework.org/schema/batch"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
              http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
-             http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd">
+             http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd
+             http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
 
     <!-- bese -->
     <bean class="org.tool.csvtodb.config.JobBaseContextConfig"/>
 
     <!--本丸 -->
     <context:component-scan base-package="org.tool.csvtodb.edit"/>
-    <!-- ItemReaderの設定-->
+    <!-- Repositoryインタフェースをスキャン -->
+    <mybatis:scan base-package="org.tool.csvtodb.common.repository" factory-ref="jobSqlSessionFactory"/>
+
+    <!-- ItemReader -->
     <bean id="reader"
           class="org.springframework.batch.item.file.FlatFileItemReader" scope="step"
           p:resource="file:#{jobParameters['inputFile']}"
@@ -36,9 +41,9 @@
         </property>
     </bean>
 
-    <!-- ItemWriterの設定 -->
+    <!-- ItemWriter -->
     <bean id="writer" class="org.mybatis.spring.batch.MyBatisBatchItemWriter"
-          p:statementId="org.tool.csvtodb.common.repository.MemberInfoRepository.updatePointAndStatus"
+          p:statementId="org.tool.csvtodb.common.repository.MemberInfoRepository.inserttest"
           p:sqlSessionTemplate-ref="batchModeSqlSessionTemplate"/>
 
     <!-- (1) -->
