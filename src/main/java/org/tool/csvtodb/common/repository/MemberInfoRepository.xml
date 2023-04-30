@@ -8,10 +8,7 @@
     <!-- (2) -->
     <select id="cursor" resultType="org.tool.csvtodb.common.dto.MemberInfoDto">
         SELECT
-            id,
-            type,
-            status,
-            point
+         *
         FROM
             member_info
         ORDER BY
@@ -31,9 +28,24 @@
     
     <!-- originalSQL -->
     <insert id="insertall" parameterType="org.tool.csvtodb.common.dto.MemberInfoDto">
-        insert into 
-                   member_info
-        values(#{id},#{type},#{status},#{point})
-    </insert>    
+        INSERT INTO
+              member_info
+        (id,type,status,point)
+        VALUES
+        (
+          #{id},#{type},#{status},#{point}
+        )
+    </insert>
+
+    <!-- originalSQL2 -->
+    <insert id="inserttest" parameterType="org.tool.csvtodb.common.dto.MemberInfoDto">
+        INSERT INTO
+              member_info
+        (id,type,status,point)
+        VALUES
+        (
+          #{id},#{type},#{status},#{point}
+        )
+    </insert>
     
 </mapper>

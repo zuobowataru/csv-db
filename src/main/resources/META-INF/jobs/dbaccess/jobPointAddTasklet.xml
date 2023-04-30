@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+             http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd
+             http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+    <!-- 常に必要なBean定義 -->
+     <bean class="org.tool.csvtodb.config.JobBaseContextConfig" />
+
+    <!-- 使用するコンポーネント(Taskletの実装クラスなど)が格納されているパッケージを指定 -->
+    <context:component-scan base-package="org.tool.csvtodb.dbaccess"/> <!-- (1) -->
+    <!-- Repositoryインタフェースをスキャン -->
+    <mybatis:scan base-package="org.tool.csvtodb.common.repository" factory-ref="jobSqlSessionFactory"/>
+
+    <!-- ItemReader -->
+    <bean id="reader"
+          class="org.mybatis.spring.batch.MyBatisCursorItemReader"
+          p:queryId="org.tool.csvtodb.common.repository.MemberInfoRepository.cursor"
+          p:sqlSessionFactory-ref="jobSqlSessionFactory"/>
+
+    <!-- ItemWriter -->
+    <bean id="writer" class="org.mybatis.spring.batch.MyBatisBatchItemWriter"
+          p:statementId="org.tool.csvtodb.common.repository.MemberInfoRepository.inserttest"
+          p:sqlSessionTemplate-ref="batchModeSqlSessionTemplate"/>
+
+    <!-- ジョブの設定 -->
+    <batch:job id="jobPointAddTasklet" job-repository="jobRepository">
+        <batch:step id="jobPointAddTasklet.step01">
+            <batch:tasklet transaction-manager="jobTransactionManager"
+                           ref="pointAddTasklet">
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+</beans>

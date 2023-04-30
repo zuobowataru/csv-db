@@ -10,4 +10,6 @@ public interface MemberInfoRepository {
 
 	  int insertall(MemberInfoDto memberInfo); // original
 
+	  int inserttest(MemberInfoDto memberInfo); // original2
+
 }
