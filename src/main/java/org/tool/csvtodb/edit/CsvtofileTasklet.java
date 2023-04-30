@@ -43,6 +43,8 @@ public class CsvtofileTasklet implements Tasklet{
             while ((item = reader.read()) != null) { // 入力リソース全件を逐次ループ処理する
 
                 //　CSVの入力値をセット
+            	item.setName("佐伯");
+            	item.setBikou("備考備考");
                 items.add(item);
 
                 if (items.size() == CHUNK_SIZE) { // リストに追加したitemの数が一定件数に達したかどうかを判定す

@@ -3,11 +3,31 @@ package org.tool.csvtodb.common.dto;
 public class MemberInfoDto {
     private String id; // (1)
 
+    public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getBikou() {
+		return bikou;
+	}
+
+	public void setBikou(String bikou) {
+		this.bikou = bikou;
+	}
+
+	private String name; // original1
+
     private String type; // (2)
 
     private String status; // (3)
 
     private int point; // (4)
+
+    private String bikou; // original2
 
     public String getId() {
         return id;

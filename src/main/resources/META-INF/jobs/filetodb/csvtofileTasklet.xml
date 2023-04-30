@@ -14,7 +14,8 @@
     <bean class="org.tool.csvtodb.config.JobBaseContextConfig"/>
 
     <!--本丸 -->
-    <context:component-scan base-package="org.tool.csvtodb.edit"/>
+    <context:component-scan base-package="org.tool.csvtodb.edit,
+            org.tool.csvtodb.common.listener"/>
     <!-- Repositoryインタフェースをスキャン -->
     <mybatis:scan base-package="org.tool.csvtodb.common.repository" factory-ref="jobSqlSessionFactory"/>
 
@@ -51,6 +52,9 @@
         <batch:step id="jobCsvToFileTasklet.step01"> <!-- (2) -->
             <batch:tasklet transaction-manager="jobTransactionManager"
                            ref="csvtofileTasklet"/> <!-- BeanIDw setting -->
+                <batch:listeners>
+                    <batch:listener ref="chunkErrorLoggingListener"/> <!--StepListenerの実装クラスを設定-->
+                </batch:listeners>
         </batch:step>
     </batch:job>
 

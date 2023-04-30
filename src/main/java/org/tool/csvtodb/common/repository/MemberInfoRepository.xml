@@ -40,11 +40,10 @@
     <!-- originalSQL2 -->
     <insert id="inserttest" parameterType="org.tool.csvtodb.common.dto.MemberInfoDto">
         INSERT INTO
-              member_info
-        (id,type,status,point)
+              member_info2
         VALUES
         (
-          #{id},#{type},#{status},#{point}
+          #{id},#{name},#{type},#{status},#{point},#{bikou}
         )
     </insert>
     
